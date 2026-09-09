@@ -1,0 +1,12 @@
+{
+  "name": "claude-token-audit",
+  "description": "Marketplace for the token-audit Claude Code skill.",
+  "owner": {"name": "tatsuo48"},
+  "plugins": [
+    {
+      "name": "token-audit",
+      "source": "./",
+      "description": "Audit past Claude Code sessions for token waste and estimated cost."
+    }
+  ]
+}
