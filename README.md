@@ -6,6 +6,9 @@ an estimated dollar amount, and tells you what to change.
 Existing tools (`/cost`, `/stats`, `ccusage`) tell you how much you spent. This one tells you why, and what
 to do differently.
 
+Using Codex CLI instead? See [codex-token-audit](https://github.com/tatsuo48/codex-token-audit), the same
+audit for `~/.codex` rollouts.
+
 ## What it detects
 
 | Rule | Pattern | Why it costs |

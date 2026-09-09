@@ -1,0 +1,25 @@
+{
+  "name": "token-audit",
+  "version": "0.1.0",
+  "description": "Audit past Codex CLI sessions for token waste, estimate the cost of each pattern, and recommend habit changes.",
+  "author": {"name": "tatsuo48", "url": "https://github.com/tatsuo48"},
+  "homepage": "https://github.com/tatsuo48/codex-token-audit",
+  "repository": "https://github.com/tatsuo48/codex-token-audit",
+  "license": "MIT",
+  "keywords": ["codex", "tokens", "cost", "prompt-caching", "audit"],
+  "skills": "./skills/",
+  "interface": {
+    "displayName": "Token Audit",
+    "shortDescription": "Find where Codex sessions waste tokens",
+    "longDescription": "Scans local Codex rollouts, converts each waste pattern (cache misses, oversized command output, repeated reads, large patches, overlong threads) into an estimated dollar amount, and tells you what to change. Local files only; no network access.",
+    "developerName": "tatsuo48",
+    "category": "Productivity",
+    "capabilities": ["Read"],
+    "websiteURL": "https://github.com/tatsuo48/codex-token-audit",
+    "defaultPrompt": [
+      "Where am I wasting tokens?",
+      "Token audit for the last 90 days",
+      "Audit token usage for project foo"
+    ]
+  }
+}
