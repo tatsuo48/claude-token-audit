@@ -1,6 +1,6 @@
 {
   "name": "token-audit",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Audit past Claude Code sessions for token waste, estimate the cost of each pattern, and recommend habit changes.",
   "author": {"name": "tatsuo48"},
   "license": "MIT",
