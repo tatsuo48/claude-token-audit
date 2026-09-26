@@ -54,6 +54,8 @@ class TtlGuardTest(unittest.TestCase):
         code, err = self._run()
         self.assertEqual(code, 2)
         self.assertIn("60 minutes", err)
+        self.assertIn("/clear", err)
+        self.assertIn("/compact", err)
         self.assertNotIn("promptCacheTtl", err)
         self.assertEqual(self._run()[0], 0)
 
