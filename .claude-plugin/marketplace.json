@@ -1,12 +1,17 @@
 {
   "name": "claude-token-audit",
-  "description": "Marketplace for the token-audit Claude Code skill.",
+  "description": "Marketplace for the token-audit skill and the ttl-guard hook for Claude Code.",
   "owner": {"name": "tatsuo48"},
   "plugins": [
     {
       "name": "token-audit",
       "source": "./",
       "description": "Audit past Claude Code sessions for token waste and estimated cost."
+    },
+    {
+      "name": "ttl-guard",
+      "source": "./plugins/ttl-guard",
+      "description": "Warn before sending a prompt after the prompt cache has (nearly) expired."
     }
   ]
 }
