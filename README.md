@@ -76,6 +76,8 @@ The prompt cache expired after 60 minutes, so sending now will re-send the entir
 
   Done with this task   → /clear to start fresh
   Still mid-task        → send the same message again
+  Long session ahead    → /compact first: it also re-sends everything once,
+                          but later turns and the next expiry cost less
 ```
 
 How it works:
@@ -88,8 +90,10 @@ How it works:
   sending is cheap and refreshes the cache, so blocking would only risk letting it expire.
 - Sending the same message again goes through. The confirmation is remembered per idle gap, so it is not
   asked again until the next response.
-- `/compact` is not suggested: after expiry it also re-sends the entire conversation to summarize it, so it
-  does not avoid the cost.
+- `/compact` does not avoid the one-time cost: after expiry it also re-sends the entire conversation to
+  summarize it. It pays off only when the session will go on for many more turns, because every later turn
+  reads just the summary from the cache and the next expiry rewrites far less. For a short remainder, sending
+  again is cheaper; `/compact` also adds the summary's output tokens and can drop details.
 - Slash commands such as `/clear` and `/compact` are never blocked. Subagent and locally generated lines
   are ignored. If no cache write is found (first turn, caching disabled), it does nothing.
 - On a 5-minute TTL it also points you to `"promptCacheTtl": "1h"`. Run the audit first if you are unsure:
