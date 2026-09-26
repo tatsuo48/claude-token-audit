@@ -11,7 +11,7 @@
     {
       "name": "ttl-guard",
       "source": "./plugins/ttl-guard",
-      "description": "Warn before sending a prompt after the prompt cache has (nearly) expired."
+      "description": "Warn before sending a prompt after the prompt cache has expired."
     }
   ]
 }
