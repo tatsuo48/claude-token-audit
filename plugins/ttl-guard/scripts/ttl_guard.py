@@ -94,9 +94,9 @@ def main():
         f"⚠️ {fmt(elapsed)} since the last exchange.\n"
         f"The prompt cache expired after {fmt(ttl)}, so sending now will re-send the entire "
         "conversation and cost significantly more.\n\n"
+        "  A new session is fine     → /clear (cheapest)\n"
         "  Wrapping up soon          → send the same message again\n"
-        "  Still a long way to go    → /compact, then continue\n"
-        "  A new session is fine     → /clear\n")
+        "  Still a long way to go    → /compact, then continue\n")
     if ttl == 300:
         msg += (
             "\n💡 Your prompt cache TTL is 5 minutes. If you often step away mid-task,\n"

@@ -74,9 +74,9 @@ that prompt once and explains your options.
 ⚠️ 72 minutes since the last exchange.
 The prompt cache expired after 60 minutes, so sending now will re-send the entire conversation and cost significantly more.
 
+  A new session is fine     → /clear (cheapest)
   Wrapping up soon          → send the same message again
   Still a long way to go    → /compact, then continue
-  A new session is fine     → /clear
 ```
 
 How it works:
