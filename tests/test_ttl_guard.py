@@ -50,7 +50,7 @@ class TtlGuardTest(unittest.TestCase):
         self.assertEqual(self._run()[0], 0)
 
     def test_expired_1h_blocks_once_then_resend_passes(self):
-        self._transcript([assistant_line("m1", ago(58), usage={"c1": 1000})])
+        self._transcript([assistant_line("m1", ago(61), usage={"c1": 1000})])
         code, err = self._run()
         self.assertEqual(code, 2)
         self.assertIn("60 minutes", err)
@@ -58,7 +58,7 @@ class TtlGuardTest(unittest.TestCase):
         self.assertEqual(self._run()[0], 0)
 
     def test_5m_ttl_suggests_1h(self):
-        self._transcript([assistant_line("m1", ago(5), usage={"c5": 1000})])
+        self._transcript([assistant_line("m1", ago(6), usage={"c5": 1000})])
         code, err = self._run()
         self.assertEqual(code, 2)
         self.assertIn("promptCacheTtl", err)
@@ -72,12 +72,12 @@ class TtlGuardTest(unittest.TestCase):
         self.assertEqual(self._run()[0], 0)
 
     def test_slash_commands_are_never_blocked(self):
-        self._transcript([assistant_line("m1", ago(58), usage={"c1": 1000})])
+        self._transcript([assistant_line("m1", ago(61), usage={"c1": 1000})])
         self.assertEqual(self._run("/compact keep the plan")[0], 0)
 
     def test_sidechain_lines_are_ignored(self):
         self._transcript([
-            assistant_line("m1", ago(58), usage={"c1": 1000}),
+            assistant_line("m1", ago(61), usage={"c1": 1000}),
             sidechain(assistant_line("a1", ago(1), usage={"c5": 1000})),
         ])
         code, err = self._run()
@@ -86,7 +86,7 @@ class TtlGuardTest(unittest.TestCase):
 
     def test_synthetic_lines_are_ignored(self):
         self._transcript([
-            assistant_line("m1", ago(58), usage={"c1": 1000}),
+            assistant_line("m1", ago(61), usage={"c1": 1000}),
             synthetic_line(ago(1)),
         ])
         self.assertEqual(self._run()[0], 2)
@@ -98,12 +98,35 @@ class TtlGuardTest(unittest.TestCase):
     def test_missing_transcript_does_nothing(self):
         self.assertEqual(self._run()[0], 0)
 
-    def test_stale_ack_warns_again(self):
+    def test_near_expiry_still_passes(self):
+        # cache is still alive at 58/60 minutes: sending refreshes it, so do not block
         self._transcript([assistant_line("m1", ago(58), usage={"c1": 1000})])
+        self.assertEqual(self._run()[0], 0)
+
+    def test_ack_does_not_expire_with_time(self):
+        self._transcript([assistant_line("m1", ago(61), usage={"c1": 1000})])
         self.assertEqual(self._run()[0], 2)
         ack = os.path.join(self.env["CLAUDE_CONFIG_DIR"], "ttl-guard", "s.ack")
-        old = time.time() - 11 * 60
+        old = time.time() - 60 * 60
         os.utime(ack, (old, old))
+        self.assertEqual(self._run()[0], 0)
+
+    def test_new_idle_gap_asks_again(self):
+        self._transcript([assistant_line("m1", ago(130), usage={"c1": 1000})])
+        self.assertEqual(self._run()[0], 2)
+        self.assertEqual(self._run()[0], 0)
+        self._transcript([
+            assistant_line("m1", ago(130), usage={"c1": 1000}),
+            assistant_line("m2", ago(65), usage={"c1": 1000}),
+        ])
+        self.assertEqual(self._run()[0], 2)
+
+    def test_expiry_counts_from_start_of_last_response(self):
+        # one response written over several lines; the cache was refreshed at its first line
+        self._transcript([
+            assistant_line("m1", ago(60.5), usage={"c1": 1000}),
+            assistant_line("m1", ago(59.5), usage={"c1": 1000}),
+        ])
         self.assertEqual(self._run()[0], 2)
 
     def test_old_state_files_are_cleaned_up(self):

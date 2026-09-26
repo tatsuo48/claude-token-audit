@@ -1,7 +1,7 @@
 {
   "name": "ttl-guard",
-  "version": "0.1.0",
-  "description": "Warn before sending a prompt once the prompt cache has (nearly) expired, and suggest /clear or /compact instead.",
+  "version": "0.2.0",
+  "description": "Warn before sending a prompt once the prompt cache has expired, and suggest /clear or /compact instead.",
   "author": {"name": "tatsuo48"},
   "license": "MIT",
   "keywords": ["claude-code", "tokens", "cost", "prompt-caching", "hooks"]

@@ -1,5 +1,5 @@
 {
-  "description": "Block a prompt once when the prompt cache TTL has (nearly) expired.",
+  "description": "Block a prompt once when the prompt cache TTL has expired.",
   "hooks": {
     "UserPromptSubmit": [
       {

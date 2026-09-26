@@ -63,7 +63,7 @@ python3 skills/token-audit/scripts/analyze.py --project my-repo --threshold r3_m
 ## Prevent R1 with ttl-guard
 
 The audit tells you after the fact. `ttl-guard` is a separate, optional plugin in the same marketplace that
-catches R1 before it happens: when you send a prompt after the prompt cache has (nearly) expired, it blocks
+catches R1 before it happens: when you send a prompt after the prompt cache has expired, it blocks
 that prompt once and explains your options.
 
 ```
@@ -71,8 +71,8 @@ that prompt once and explains your options.
 ```
 
 ```
-⚠️ 58 minutes since the last exchange.
-The prompt cache expires after 60 minutes, so sending now will re-send the entire conversation and cost significantly more.
+⚠️ 72 minutes since the last exchange.
+The prompt cache expired after 60 minutes, so sending now will re-send the entire conversation and cost significantly more.
 
   Recommended           → /clear to start fresh
   Still mid-task        → /compact [what to keep] to summarize, then continue
@@ -85,7 +85,10 @@ How it works:
   main-conversation response and the TTL of the latest cache write (`ephemeral_1h_input_tokens` or
   `ephemeral_5m_input_tokens`). Because it reads the TTL Claude Code actually used, it follows
   `promptCacheTtl`, the TTL environment variables, and your plan or billing state without re-implementing them.
-- It warns once 90% of the TTL has passed. Sending the same message again within 10 minutes goes through.
+- It only asks once the TTL has actually passed, measured from the start of the last response. Before that,
+  sending is cheap and refreshes the cache, so blocking would only risk letting it expire.
+- Sending the same message again goes through. The confirmation is remembered per idle gap, so it is not
+  asked again until the next response.
 - Slash commands such as `/clear` and `/compact` are never blocked. Subagent and locally generated lines
   are ignored. If no cache write is found (first turn, caching disabled), it does nothing.
 - On a 5-minute TTL it also points you to `"promptCacheTtl": "1h"`. Run the audit first if you are unsure:
@@ -117,7 +120,7 @@ ttl-guard:
 
 - Reads the tail of the current session's transcript, using only timestamps, usage numbers, and whether a
   line is a subagent or synthetic one. From your prompt it only checks whether it starts with `/`.
-- Writes empty marker files under `~/.claude/ttl-guard/` (or `$CLAUDE_CONFIG_DIR/ttl-guard/`) to remember
+- Writes small marker files (the timestamp of the confirmed response) under `~/.claude/ttl-guard/` (or `$CLAUDE_CONFIG_DIR/ttl-guard/`) to remember
   a shown warning, and deletes ones older than 90 days.
 - No network access.
 
