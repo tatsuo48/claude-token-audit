@@ -1,0 +1,15 @@
+{
+  "description": "Block a prompt once when the prompt cache TTL has (nearly) expired.",
+  "hooks": {
+    "UserPromptSubmit": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python3 \"${CLAUDE_PLUGIN_ROOT}/scripts/ttl_guard.py\""
+          }
+        ]
+      }
+    ]
+  }
+}
