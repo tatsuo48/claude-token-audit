@@ -74,10 +74,9 @@ that prompt once and explains your options.
 ⚠️ 72 minutes since the last exchange.
 The prompt cache expired after 60 minutes, so sending now will re-send the entire conversation and cost significantly more.
 
-  Done with this task   → /clear to start fresh
-  Still mid-task        → send the same message again
-  Long session ahead    → /compact first: it also re-sends everything once,
-                          but later turns and the next expiry cost less
+  A new session is fine     → /clear (cheapest)
+  Wrapping up soon          → send the same message again
+  Still a long way to go    → /compact, then continue
 ```
 
 How it works:
