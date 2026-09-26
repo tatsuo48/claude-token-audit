@@ -1,6 +1,6 @@
 {
   "name": "ttl-guard",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "Warn before sending a prompt once the prompt cache has expired, and suggest /clear instead.",
   "author": {"name": "tatsuo48"},
   "license": "MIT",
