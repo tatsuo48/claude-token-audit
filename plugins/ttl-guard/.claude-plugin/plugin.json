@@ -1,6 +1,6 @@
 {
   "name": "ttl-guard",
-  "version": "0.2.2",
+  "version": "0.2.3",
   "description": "Warn before sending a prompt once the prompt cache has expired, and explain when /clear or /compact is cheaper.",
   "author": {"name": "tatsuo48"},
   "license": "MIT",
