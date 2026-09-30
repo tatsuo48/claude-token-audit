@@ -3,7 +3,7 @@ name: token-audit
 description: Audit past Claude Code sessions for wasted tokens, estimate the cost of each waste pattern (cache rewrites after idle gaps, oversized tool results, repeated file reads, large Write outputs, overlong sessions), and recommend concrete habit changes. Use when the user asks about token efficiency, token waste, session cost, why Claude Code is expensive, or mentions トークン監査, トークン効率, 無駄なトークン, token audit, token efficiency, token waste.
 metadata:
   author: tatsuo48
-  version: "0.1.1"
+  version: "0.1.2"
 ---
 
 # Token Audit
