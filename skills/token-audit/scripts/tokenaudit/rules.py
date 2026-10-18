@@ -63,7 +63,7 @@ def detect_cache_rewrites(s: Session, pricing: Pricing, th: dict) -> List[Findin
     for i, t in enumerate(s.turns):
         u = t.usage
         if prev is not None and u.cache_write > 0:
-            r = pricing.rates(t.model)
+            r = pricing.rates(t.model, u.context)
             gap_min = (t.ts - prev.ts).total_seconds() / 60.0
             ttl_min = 60 if u.cache_1h > 0 else 5
             waste = (u.cache_5m * (r["w5"] - r["read"])
@@ -94,7 +94,7 @@ def detect_large_results(s: Session, pricing: Pricing, th: dict) -> List[Finding
         if tokens < th["r3_min_tokens"] or not (0 <= res.turn_index < n):
             continue
         turn = s.turns[res.turn_index]
-        r = pricing.rates(turn.model)
+        r = pricing.rates(turn.model, turn.usage.context)
         remaining = n - 1 - res.turn_index
         waste = tokens * (remaining * r["read"] + write_multiplier(s, r)) * r["input"]
         use = uses.get(res.tool_use_id)
@@ -120,7 +120,7 @@ def detect_repeated_reads(s: Session, pricing: Pricing, th: dict) -> List[Findin
             continue
         extra = sum(est_tokens(sizes.get(uid, 0), th) for _, uid in lst[1:])
         last_turn = s.turns[lst[-1][0]]
-        r = pricing.rates(last_turn.model)
+        r = pricing.rates(last_turn.model, last_turn.usage.context)
         waste = extra * write_multiplier(s, r) * r["input"]
         out.append(_finding(s, "R4", last_turn.ts, waste, {
             "file_path": path, "reads": len(lst), "extra_est_tokens": extra}))
@@ -131,7 +131,7 @@ def detect_large_writes(s: Session, pricing: Pricing, th: dict) -> List[Finding]
     out: List[Finding] = []
     per_path = {}
     for i, t in enumerate(s.turns):
-        r = pricing.rates(t.model)
+        r = pricing.rates(t.model, t.usage.context)
         for u in t.tool_uses:
             if u.name != "Write":
                 continue
@@ -149,7 +149,7 @@ def detect_large_writes(s: Session, pricing: Pricing, th: dict) -> List[Finding]
             continue
         extra = sum(tok for _, tok in lst[1:])
         last_turn = s.turns[lst[-1][0]]
-        r = pricing.rates(last_turn.model)
+        r = pricing.rates(last_turn.model, last_turn.usage.context)
         out.append(_finding(s, "R5", last_turn.ts, extra * r["output"], {
             "kind": "repeated_write", "file_path": path, "writes": len(lst),
             "extra_est_tokens": extra}))
@@ -167,7 +167,7 @@ def detect_long_session(s: Session, pricing: Pricing, th: dict) -> List[Finding]
     for t in s.turns:
         over = t.usage.context - th["r6_max_context"]
         if over > 0:
-            r = pricing.rates(t.model)
+            r = pricing.rates(t.model, t.usage.context)
             waste += over * r["read"] * r["input"]
     return [_finding(s, "R6", s.turns[-1].ts, waste, {
         "turns": n, "final_context_tokens": final_ctx})]

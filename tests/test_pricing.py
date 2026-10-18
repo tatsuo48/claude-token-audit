@@ -27,6 +27,24 @@ class PricingTest(unittest.TestCase):
         c = self.p.cost("claude-fable-5-1", Usage(cache_read=10000))
         self.assertAlmostEqual(c.cache_read, 10000 * 0.025 * 10e-6)
 
+    def test_haiku55_long_context_tier(self):
+        base = self.p.rates("claude-haiku-5-5", context_tokens=100000)
+        self.assertAlmostEqual(base["input"], 0.10e-6)
+        self.assertAlmostEqual(base["output"], 0.50e-6)
+        over = self.p.rates("claude-haiku-5-5", context_tokens=100001)
+        self.assertAlmostEqual(over["input"], 0.50e-6)
+        self.assertAlmostEqual(over["output"], 2.50e-6)
+        # cache multipliers fall back to the global defaults in both tiers
+        self.assertAlmostEqual(over["read"], 0.1)
+        self.assertAlmostEqual(over["w5"], 1.25)
+        self.assertAlmostEqual(over["w1"], 2.0)
+
+    def test_haiku55_long_context_cost(self):
+        u = Usage(input=150000, output=100)
+        c = self.p.cost("claude-haiku-5-5", u)
+        self.assertAlmostEqual(c.input, 150000 * 0.50e-6)
+        self.assertAlmostEqual(c.output, 100 * 2.50e-6)
+
     def test_prefix_match_resolves_dated_model(self):
         self.assertEqual(self.p.resolve("claude-opus-4-6-20260101"), "claude-opus-4-6")
         self.assertEqual(self.p.resolve("claude-fable-5-1"), "claude-fable-5-1")

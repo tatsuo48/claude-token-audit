@@ -47,8 +47,11 @@ class Pricing:
         self.unknown_models.add(model)
         return self.default_model
 
-    def rates(self, model: str) -> dict:
+    def rates(self, model: str, context_tokens: int = 0) -> dict:
         m = self.models[self.resolve(model)]
+        lc = m.get("long_context")
+        if lc and context_tokens > lc["threshold"]:
+            m = {**m, **lc}
         return {
             "input": m["input"] / 1e6,
             "output": m["output"] / 1e6,
@@ -61,7 +64,7 @@ class Pricing:
         return self.models[self.resolve(model)]["input"] >= min_input_per_m
 
     def cost(self, model: str, u: Usage) -> Cost:
-        r = self.rates(model)
+        r = self.rates(model, u.context)
         return Cost(
             input=u.input * r["input"],
             cache_write=(u.cache_5m * r["w5"] + u.cache_1h * r["w1"]) * r["input"],

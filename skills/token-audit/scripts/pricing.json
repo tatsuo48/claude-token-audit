@@ -1,5 +1,5 @@
 {
-  "_comment": "USD per 1M tokens. Multipliers apply to the input price. Update this file only.",
+  "_comment": "USD per 1M tokens. Multipliers apply to the input price. An entry's optional long_context block overrides input/output (and, if given, cache_read/cache_write_Nm/h) once a turn's prompt length (Usage.context) exceeds its threshold. Update this file only.",
   "default_model": "claude-opus-5",
   "multipliers": {
     "cache_write_5m": 1.25,
@@ -19,6 +19,10 @@
     "claude-sonnet-5-5": {"input": 2, "output": 10},
     "claude-sonnet-5": {"input": 2, "output": 10},
     "claude-sonnet-4-6": {"input": 3, "output": 15},
+    "claude-haiku-5-5": {
+      "input": 0.10, "output": 0.50,
+      "long_context": {"threshold": 100000, "input": 0.50, "output": 2.50}
+    },
     "claude-haiku-4-5": {"input": 1, "output": 5}
   }
 }
